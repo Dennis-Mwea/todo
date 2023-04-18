@@ -10,4 +10,5 @@ interface UserTask {
 	task_id: number
 	updated_at: String
 	user_id: number
+	status: Status
 }

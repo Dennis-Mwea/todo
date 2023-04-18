@@ -8,4 +8,5 @@ interface Task {
 	created_at: String
 	description: String
 	task: UserTask
+	status: Status
 }
