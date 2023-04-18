@@ -19,6 +19,7 @@ class TaskSeeder extends Seeder
         User::all()->each(function (User $user) {
             Task::factory()->count(20)->has(UserTask::factory()->state(fn(array $attrs, Task $task) => [
                 'user_id' => $user->id,
+                'due_date' => $task->due_date,
                 'status_id' => $task->status_id,
             ]), 'task')->create();
         });
