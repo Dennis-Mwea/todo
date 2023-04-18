@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Task;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TaskRequest extends FormRequest
@@ -13,6 +14,12 @@ class TaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        /** @var Task|null $task */
+        $task = $this->route('task')?->loadMissing('task');
+        if (!is_null($task)) {
+            return $task->task->user_id != auth()->id();
+        }
+
         return true;
     }
 
@@ -28,6 +35,7 @@ class TaskRequest extends FormRequest
             'description' => ['required', 'string', 'max:255'],
             'status_id' => ['required', 'numeric', 'exists:statuses,id'],
             'due_date' => ['required', 'date', 'after:' . now()->addMinutes(5)],
+            'user_id' => ['sometimes', 'required', ]
         ];
     }
 
