@@ -18,13 +18,14 @@ class TasksController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $tasks = Task::with('task')->whereHas('task', function (Builder $query) {
             $query->where('user_id', auth()->id());
-        })->with(['task', 'status'])->latest()->paginate();
+        })->with(['task', 'status'])->latest()->paginate($request->integer('perPage', 15));
 
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,

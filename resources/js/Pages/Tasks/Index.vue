@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {computed, ref} from "vue";
-import {Link, useForm} from "@inertiajs/vue3";
+import {Link, router, useForm} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -10,6 +10,7 @@ import DialogModal from "@/Components/DialogModal.vue";
 import InputError from "@/Components/InputError.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
+import PaginationComponent from "@/Components/PaginationComponent.vue";
 
 defineProps<{
 	tasks: Pagination<Task>,
@@ -17,34 +18,38 @@ defineProps<{
 
 const selected = computed<Array<number>>(() => [])
 const confirmingTaskDeletion = ref(false);
-const taskToDelete = ref<number|null>(null);
-const passwordInput = ref<HTMLElement|null>(null);
+const taskToDelete = ref<number | null>(null);
+const passwordInput = ref<HTMLElement | null>(null);
 const form = useForm({
 	password: '',
 });
 
 const confirmTaskDeletion = (task: number) => {
-    taskToDelete.value = task
-    confirmingTaskDeletion.value = true
+	taskToDelete.value = task
+	confirmingTaskDeletion.value = true
 
-    setTimeout(() => passwordInput.value!.focus(), 250);
+	setTimeout(() => passwordInput.value!.focus(), 250);
 };
 
 const closeModal = () => {
-    form.reset()
-    taskToDelete.value = null
-    confirmingTaskDeletion.value = false
+	form.reset()
+	taskToDelete.value = null
+	confirmingTaskDeletion.value = false
 };
 
 const deleteTask = () => {
-    if (taskToDelete.value != null) {
-        form.delete(route('tasks.destroy', taskToDelete.value), <Partial<VisitOptions>>{
-            preserveScroll: true,
-            onFinish: () => form.reset(),
-            onSuccess: () => closeModal(),
-            onError: () => passwordInput.value!.focus(),
-        });
-    }
+	if (taskToDelete.value != null) {
+		form.delete(route('tasks.destroy', taskToDelete.value), <Partial<VisitOptions>>{
+			preserveScroll: true,
+			onFinish: () => form.reset(),
+			onSuccess: () => closeModal(),
+			onError: () => passwordInput.value!.focus(),
+		});
+	}
+}
+
+const getTasks = ({ page = 1, perPage = 1 }) => {
+	router.get(route('tasks.index', { page, perPage }));
 }
 </script>
 
@@ -141,7 +146,7 @@ const deleteTask = () => {
                         <tr>
                             <td class="text-end border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400"
                                 colspan="5">
-                                Pagination here
+                                <PaginationComponent :data="tasks" @page="getTasks"/>
                             </td>
                         </tr>
                     </template>
