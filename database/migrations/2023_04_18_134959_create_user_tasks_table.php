@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('due_date');
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->string('remarks', 100);
+            $table->string('remarks', 100)->nullable();
             $table->foreignId('status_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
