@@ -22,5 +22,5 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
-    Route::resource('/tasks', TasksController::class);
+    Route::resource('/tasks', TasksController::class)->except(['show']);
 });
