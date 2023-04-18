@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import type {PropType} from "vue";
 import {computed} from "vue";
 import {Link} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 
-defineProps({
-	tasks: Object as PropType<Pagination<Task>>,
-})
+defineProps<{
+	tasks: Pagination<Task>,
+}>()
 
 const selected = computed<Array<number>>(() => [])
 </script>
@@ -56,8 +55,8 @@ const selected = computed<Array<number>>(() => [])
                     </tr>
                     </thead>
                     <tbody class="bg-white dark:bg-slate-800">
-                    <template v-if="tasks!.data.length > 0">
-                        <tr v-for="(task, index) in tasks!.data" :key="`task-${task.id}-${index}`">
+                    <template v-if="tasks.data.length > 0">
+                        <tr v-for="(task, index) in tasks.data" :key="`task-${task.id}-${index}`">
                             <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
                                 <Checkbox v-model:checked="selected" name="selected"/>
                             </td>
