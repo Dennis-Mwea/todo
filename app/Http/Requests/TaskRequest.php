@@ -17,7 +17,7 @@ class TaskRequest extends FormRequest
         /** @var Task|null $task */
         $task = $this->route('task')?->loadMissing('task');
         if (!is_null($task)) {
-            return $task->task->user_id != auth()->id();
+            return $task->task->user_id == auth()->id();
         }
 
         return true;
