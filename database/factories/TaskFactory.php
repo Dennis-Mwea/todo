@@ -19,6 +19,7 @@ class TaskFactory extends Factory
     {
         return [
             'name' => $this->faker->sentence,
+            'due_date' => $this->faker->dateTime,
             'status_id' => Status::all()->random()->id,
             'description' => $this->faker->sentences(asText: true),
         ];
