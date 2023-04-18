@@ -81,7 +81,7 @@ class TasksController extends Controller
     {
         return Inertia::render('Tasks/Edit', [
             'statuses' => Status::get(),
-            'task' => $task->load('task'),
+            'task' => $task->load('task')->append('formatted_due_date'),
         ]);
     }
 

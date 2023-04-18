@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -50,5 +49,15 @@ class Task extends Model
     public function task(): HasOne
     {
         return $this->hasOne(UserTask::class);
+    }
+
+    /**
+     * Format due date to Y-m-d
+     *
+     * @return string
+     */
+    public function getFormattedDueDateAttribute(): string
+    {
+        return $this->due_date->format('Y-m-d');
     }
 }

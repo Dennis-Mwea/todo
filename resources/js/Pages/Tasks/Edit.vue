@@ -16,9 +16,9 @@ const props = defineProps<{
 
 const form = useForm({
     name: props.task.name,
-    due_date: props.task.due_date,
     status_id: props.task.status_id,
     description: props.task.description,
+    due_date: props.task.formatted_due_date,
 });
 
 const submit = () => {

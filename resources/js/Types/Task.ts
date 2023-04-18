@@ -9,4 +9,5 @@ interface Task {
 	description: String
 	task: UserTask
 	status: Status
+	formatted_due_date?: String
 }
