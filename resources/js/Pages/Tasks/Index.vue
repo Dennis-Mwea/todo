@@ -17,9 +17,16 @@ const selected = computed<Array<number>>(() => [])
 <template>
     <AppLayout title="Todos">
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Todo List
-            </h2>
+            <div class="flex justify-between">
+                <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                    Tasks
+                </h2>
+
+                <Link :href="route('tasks.create')"
+                      class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                    Create Task
+                </Link>
+            </div>
         </template>
 
         <div class="py-12">
@@ -74,7 +81,8 @@ const selected = computed<Array<number>>(() => [])
                                             <svg class="ms-auto" height="24px" viewBox="0 0 24 24"
                                                  width="24px" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M0 0h24v24H0z" fill="none"/>
-                                                <path fill="currentColor" d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                                                <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                                      fill="currentColor"/>
                                             </svg>
                                         </div>
                                     </template>
@@ -82,11 +90,11 @@ const selected = computed<Array<number>>(() => [])
                                     <template #content>
                                         <DropdownLink>View</DropdownLink>
 
-                                        <div class="border-t border-gray-200 dark:border-gray-600" />
+                                        <div class="border-t border-gray-200 dark:border-gray-600"/>
 
                                         <DropdownLink>Edit</DropdownLink>
 
-                                        <div class="border-t border-gray-200 dark:border-gray-600" />
+                                        <div class="border-t border-gray-200 dark:border-gray-600"/>
 
                                         <DropdownLink>Delete</DropdownLink>
                                     </template>
@@ -95,9 +103,10 @@ const selected = computed<Array<number>>(() => [])
                         </tr>
 
                         <tr>
-                           <td class="text-end border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400" colspan="5">
-                               Pagination here
-                           </td>
+                            <td class="text-end border-b border-slate-100 dark:border-slate-700 p-4 pr-8 text-slate-500 dark:text-slate-400"
+                                colspan="5">
+                                Pagination here
+                            </td>
                         </tr>
                     </template>
 
