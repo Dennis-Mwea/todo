@@ -24,6 +24,15 @@ class Task extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
+    /**
      * Get the status which the task is in.
      *
      * @return BelongsTo

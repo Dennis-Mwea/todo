@@ -22,6 +22,17 @@ class UserTask extends Model
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'due_date' => 'datetime',
+        'end_date' => 'datetime',
+        'start_date' => 'datetime',
+    ];
+
+    /**
      * Get the owner of the task
      *
      * @return BelongsTo
