@@ -81,24 +81,43 @@ class TasksController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Task $task
+     * @return Response
      */
-    public function edit($id)
+    public function edit(Task $task): Response
     {
-        //
+        return Inertia::render('Tasks/Edit', [
+            'statuses' => Status::get(),
+            'task' => $task->load('task'),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Task $task
+     * @return RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(TaskRequest $request, Task $task)
     {
-        //
+        $data = $request->validated();
+
+        $task->loadMissing('task');
+
+        $task = tap($task)->update([
+            'name' => $data['name'],
+            'due_date' => $data['due_date'],
+            'status_id' => $data['status_id'],
+            'description' => $data['description'],
+        ]);
+
+        tap($task->task)->update([
+            'due_date' => $data['due_date'],
+            'status_id' => $data['status_id'],
+        ]);
+
+        return to_route('tasks.index');
     }
 
     /**

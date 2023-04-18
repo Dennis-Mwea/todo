@@ -87,15 +87,15 @@ const selected = computed<Array<number>>(() => [])
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink>View</DropdownLink>
+                                        <DropdownLink as="button">View</DropdownLink>
 
                                         <div class="border-t border-gray-200 dark:border-gray-600"/>
 
-                                        <DropdownLink>Edit</DropdownLink>
+                                        <DropdownLink :href="route('tasks.edit', task.id)">Edit</DropdownLink>
 
                                         <div class="border-t border-gray-200 dark:border-gray-600"/>
 
-                                        <DropdownLink>Delete</DropdownLink>
+                                        <DropdownLink as="button">Delete</DropdownLink>
                                     </template>
                                 </Dropdown>
                             </td>
