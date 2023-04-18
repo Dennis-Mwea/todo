@@ -8,8 +8,10 @@ use App\Models\Task;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Laravel\Fortify\Actions\ConfirmPassword;
 
 class TasksController extends Controller
 {
@@ -110,18 +112,32 @@ class TasksController extends Controller
 
         flash("Task $task->name has been updated.");
 
-//        return back();
         return to_route('tasks.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
+     * @param Request $request
      * @param Task $task
      * @return RedirectResponse
      */
-    public function destroy(Task $task)
+    public function destroy(Request $request, Task $task)
     {
+        $task->loadMissing('task');
+
+        $confirmed = app(ConfirmPassword::class)(
+            auth()->guard('web'),
+            $request->user(),
+            $request->input('password')
+        );
+
+        if (!$confirmed || auth()->id() != $task->task->user_id) {
+            throw ValidationException::withMessages([
+                'password' => __('The password is incorrect.'),
+            ]);
+        }
+
         $task->delete();
 
         flash("Task $task->name has been deleted.");
