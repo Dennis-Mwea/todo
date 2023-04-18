@@ -117,6 +117,13 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.17.17.tgz#2b577b976e6844106715bbe0cdc57cd1528063f9"
   integrity sha512-FNZw7H3aqhF9OyRQbDDnzUApDXfC1N6fgBhkqEO2jvYCJ+DxMTfZVqg3AX0R1khg1wHTBRD5SdcibSJ+XF6bFg==
 
+"@flasher/flasher@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@flasher/flasher/-/flasher-1.2.4.tgz#a6a410edd0ab37573978c988b3074a682e3c2abe"
+  integrity sha512-m5sidHIDC48md0dsuTOedtLKEIwlxyWYwaZtRaLvqspeFcBMPSIDTLAL1yYIuFT12z0eWuYIWGpAO8fpaBhvog==
+  dependencies:
+    csstype "^3.1.1"
+
 "@inertiajs/core@1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@inertiajs/core/-/core-1.0.3.tgz#bc9201eeca3f90ec70c818ada1f0f416b6ecce9b"
@@ -449,6 +456,11 @@ csstype@^2.6.8:
   version "2.6.21"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.21.tgz#2efb85b7cc55c80017c66a5ad7cbd931fda3a90e"
   integrity sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==
+
+csstype@^3.1.1:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
+  integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
 deepmerge@^4.0.0:
   version "4.3.1"

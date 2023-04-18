@@ -64,7 +64,9 @@ class TasksController extends Controller
             'status_id' => $data['status_id'],
         ]);
 
-        return to_route('tasks.index')->with('status', 'Task created.');
+        flash("New task created.");
+
+        return to_route('tasks.index');
     }
 
     /**
@@ -106,17 +108,24 @@ class TasksController extends Controller
             'status_id' => $data['status_id'],
         ]);
 
+        flash("Task $task->name has been updated.");
+
+//        return back();
         return to_route('tasks.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Task $task
+     * @return RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+
+        flash("Task $task->name has been deleted.");
+
+        return back();
     }
 }
