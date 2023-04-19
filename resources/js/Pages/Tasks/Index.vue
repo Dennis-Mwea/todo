@@ -1,55 +1,36 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {computed, ref} from "vue";
-import {Link, router, useForm} from "@inertiajs/vue3";
+import {computed, onMounted, ref} from "vue";
+import {Link, router} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
-import DangerButton from "@/Components/DangerButton.vue";
-import DialogModal from "@/Components/DialogModal.vue";
-import InputError from "@/Components/InputError.vue";
-import SecondaryButton from "@/Components/SecondaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
 import PaginationComponent from "@/Components/PaginationComponent.vue";
+import ConfirmDeleteModalComponent from "@/PageComponents/Tasks/Modals/ConfirmDeleteModalComponent.vue";
 
 defineProps<{
-	tasks: Pagination<Task>,
+    tasks: Pagination<Task>,
 }>()
 
 const selected = computed<Array<number>>(() => [])
 const confirmingTaskDeletion = ref(false);
 const taskToDelete = ref<number | null>(null);
-const passwordInput = ref<HTMLElement | null>(null);
-const form = useForm({
-	password: '',
-});
+const childRef = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
 
 const confirmTaskDeletion = (task: number) => {
-	taskToDelete.value = task
-	confirmingTaskDeletion.value = true
+    taskToDelete.value = task
+    confirmingTaskDeletion.value = true
 
-	setTimeout(() => passwordInput.value!.focus(), 250);
+    setTimeout(() => childRef.value!.focusToInput(), 250);
 };
 
 const closeModal = () => {
-	form.reset()
-	taskToDelete.value = null
-	confirmingTaskDeletion.value = false
+    taskToDelete.value = null
+    confirmingTaskDeletion.value = false
 };
 
-const deleteTask = () => {
-	if (taskToDelete.value != null) {
-		form.delete(route('tasks.destroy', taskToDelete.value), <Partial<VisitOptions>>{
-			preserveScroll: true,
-			onFinish: () => form.reset(),
-			onSuccess: () => closeModal(),
-			onError: () => passwordInput.value!.focus(),
-		});
-	}
-}
-
-const getTasks = ({ page = 1, perPage = 1 }) => {
-	router.get(route('tasks.index', { page, perPage }));
+const getTasks = ({page = 1, perPage = 1}) => {
+    router.get(route('tasks.index', {page, perPage}));
 }
 </script>
 
@@ -120,8 +101,9 @@ const getTasks = ({ page = 1, perPage = 1 }) => {
                                             <svg class="ms-auto" height="24px" viewBox="0 0 24 24"
                                                  width="24px" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M0 0h24v24H0z" fill="none"/>
-                                                <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
-                                                      fill="currentColor"/>
+                                                <path
+                                                    d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                                                    fill="currentColor"/>
                                             </svg>
                                         </div>
                                     </template>
@@ -167,38 +149,7 @@ const getTasks = ({ page = 1, perPage = 1 }) => {
         </div>
 
         <!-- Delete Account Confirmation Modal -->
-        <DialogModal :show="confirmingTaskDeletion" @close="closeModal">
-            <template #title>
-                Delete Task
-            </template>
-
-            <template #content>
-                Are you sure you want to delete This task?
-
-                <div class="mt-4">
-                    <TextInput ref="passwordInput"
-                               v-model="form.password"
-                               autocomplete="current-password"
-                               class="mt-1 block w-3/4"
-                               placeholder="Password"
-                               type="password"
-                               @keyup.enter="deleteTask"/>
-
-                    <InputError :message="form.errors.password" class="mt-2"/>
-                </div>
-            </template>
-
-            <template #footer>
-                <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
-
-                <DangerButton
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        class="ml-3"
-                        @click="deleteTask">
-                    Delete Task
-                </DangerButton>
-            </template>
-        </DialogModal>
+        <ConfirmDeleteModalComponent ref="childRef" :show="confirmingTaskDeletion" :task="taskToDelete"
+                                     @close="closeModal"/>
     </AppLayout>
 </template>
