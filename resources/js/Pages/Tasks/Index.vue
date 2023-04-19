@@ -7,13 +7,17 @@ import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 import PaginationComponent from "@/Components/PaginationComponent.vue";
 import ConfirmDeleteModalComponent from "@/PageComponents/Tasks/Modals/ConfirmDeleteModalComponent.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import CreateEditModalComponent from "@/PageComponents/Tasks/Modals/CreateEditModalComponent.vue";
 
 defineProps<{
     tasks: Pagination<Task>,
+    statuses: Array<Status>,
 }>()
 
 const selected = computed<Array<number>>(() => [])
 const confirmingTaskDeletion = ref(false);
+const creatingOrEditingTask = ref(false);
 const taskToDelete = ref<number | null>(null);
 const childRef = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
 
@@ -29,6 +33,18 @@ const closeModal = () => {
     confirmingTaskDeletion.value = false
 };
 
+const createOrEditTask = () => {
+    creatingOrEditingTask.value = true
+    // taskToDelete.value = task
+    // confirmingTaskDeletion.value = true
+    //
+    // setTimeout(() => childRef.value!.focusToInput(), 250);
+};
+
+const closeEditModal = () => {
+    creatingOrEditingTask.value = false
+}
+
 const getTasks = ({page = 1, perPage = 1}) => {
     router.get(route('tasks.index', {page, perPage}));
 }
@@ -42,10 +58,10 @@ const getTasks = ({page = 1, perPage = 1}) => {
                     Tasks
                 </h2>
 
-                <Link :href="route('tasks.create')"
+                <PrimaryButton @click="createOrEditTask"
                       class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                     Create Task
-                </Link>
+                </PrimaryButton>
             </div>
         </template>
 
@@ -151,5 +167,7 @@ const getTasks = ({page = 1, perPage = 1}) => {
         <!-- Delete Account Confirmation Modal -->
         <ConfirmDeleteModalComponent ref="childRef" :show="confirmingTaskDeletion" :task="taskToDelete"
                                      @close="closeModal"/>
+
+        <CreateEditModalComponent :show="creatingOrEditingTask" :statuses="statuses" @close-create="closeEditModal" />
     </AppLayout>
 </template>

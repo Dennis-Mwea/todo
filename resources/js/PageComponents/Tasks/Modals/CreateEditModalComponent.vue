@@ -1,47 +1,48 @@
 <script lang="ts" setup>
-import AppLayout from "@/Layouts/AppLayout.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import Modal from "@/Components/Modal.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 import {useForm} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
-import TextInput from "@/Components/TextInput.vue";
-import TextAreaInput from "@/Components/TextAreaInput.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 import SelectInput from "@/Components/SelectInput.vue";
+import TextInput from "@/Components/TextInput.vue";
+import InputLabel from "@/Components/InputLabel.vue";
+import InputError from "@/Components/InputError.vue";
+import TextAreaInput from "@/Components/TextAreaInput.vue";
 
 defineProps<{
-	status?: String,
-	statuses: Array<Status>,
+    show: Boolean,
+    statuses: Array<Status>,
 }>()
+const emit = defineEmits(['closeCreate']);
 
 const form = useForm({
-	name: '',
-	due_date: null,
-	status_id: null,
-	description: '',
-});
+    name: null,
+    due_date: null,
+    status_id: null,
+    description: null,
+})
+
+const close = () => (emit('closeCreate'));
 
 const submit = () => {
     form.post(route('tasks.store'), <Partial<VisitOptions>>{
-        onSuccess: () => form.reset(),
         onBefore: () => form.clearErrors(),
+        onSuccess: () => {
+            form.reset()
+            close()
+        },
     });
 }
 </script>
 
 <template>
-    <AppLayout title="Todos">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                New Task
-            </h2>
-        </template>
+    <Modal :show="show" @close="close">
+        <div class="px-6 py-4">
+            <div class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                Create Task
+            </div>
 
-        <div class="py-12">
-            <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-                <div v-if="status" class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-                    {{ status }}
-                </div>
-
+            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
                 <form @submit.prevent="submit">
                     <div>
                         <InputLabel for="name" value="Name"/>
@@ -92,15 +93,19 @@ const submit = () => {
 
                         <InputError :message="form.errors.due_date" class="mt-2"/>
                     </div>
-
-                    <div class="flex items-center justify-end mt-8">
-                        <PrimaryButton :class="{'opacity-25': form.processing}" :disabled="form.processing"
-                                       class="ml-4">
-                            Save Task
-                        </PrimaryButton>
-                    </div>
                 </form>
             </div>
         </div>
-    </AppLayout>
+
+        <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 dark:bg-gray-800 text-right">
+            <SecondaryButton @click="close">Cancel</SecondaryButton>
+
+            <PrimaryButton :class="{ 'opacity-25': form.processing }"
+                           :disabled="form.processing"
+                           class="ml-3"
+                           @click="submit">
+                Save Task
+            </PrimaryButton>
+        </div>
+    </Modal>
 </template>

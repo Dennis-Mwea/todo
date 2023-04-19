@@ -29,17 +29,6 @@ class TasksController extends Controller
 
         return Inertia::render('Tasks/Index', [
             'tasks' => $tasks,
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        return Inertia::render('Tasks/Create', [
             'statuses' => Status::get(),
         ]);
     }
