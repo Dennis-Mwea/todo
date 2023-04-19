@@ -8,31 +8,54 @@ import TextInput from "@/Components/TextInput.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import TextAreaInput from "@/Components/TextAreaInput.vue";
+import {ref} from "vue";
 
-defineProps<{
+const props = defineProps<{
     show: Boolean,
     statuses: Array<Status>,
 }>()
 const emit = defineEmits(['closeCreate']);
+const taskToEdit = ref<number | null>(null)
 
 const form = useForm({
-    name: null,
-    due_date: null,
-    status_id: null,
-    description: null,
+    name: '',
+    due_date: '',
+    status_id: '',
+    description: '',
 })
 
-const close = () => (emit('closeCreate'));
+const close = () => {
+    taskToEdit.value = null
+    form.reset()
+    form.clearErrors()
+    emit('closeCreate')
+};
+
+const editTask = (task: Task) => {
+    taskToEdit.value = task.id
+    form.name = task.name
+    form.status_id = task.status_id
+    form.description = task.description
+    form.due_date = task.formatted_due_date
+}
 
 const submit = () => {
-    form.post(route('tasks.store'), <Partial<VisitOptions>>{
+    const options = <Partial<VisitOptions>>{
         onBefore: () => form.clearErrors(),
         onSuccess: () => {
             form.reset()
             close()
         },
-    });
+    }
+
+    if (taskToEdit.value != null) {
+        form.put(route('tasks.update', taskToEdit.value), options);
+    } else {
+        form.post(route('tasks.store'), options);
+    }
 }
+
+defineExpose({editTask})
 </script>
 
 <template>
@@ -98,7 +121,10 @@ const submit = () => {
         </div>
 
         <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 dark:bg-gray-800 text-right">
-            <SecondaryButton @click="close">Cancel</SecondaryButton>
+            <SecondaryButton :class="{ 'opacity-25': form.processing }"
+                             :disabled="form.processing"
+                             @click="close">Cancel
+            </SecondaryButton>
 
             <PrimaryButton :class="{ 'opacity-25': form.processing }"
                            :disabled="form.processing"

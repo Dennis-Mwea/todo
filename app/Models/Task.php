@@ -32,6 +32,15 @@ class Task extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'formatted_due_date'
+    ];
+
+    /**
      * Get the status which the task is in.
      *
      * @return BelongsTo

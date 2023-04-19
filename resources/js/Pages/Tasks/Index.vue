@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {computed, onMounted, ref} from "vue";
+import {computed, ref} from "vue";
 import {Link, router} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -17,9 +17,11 @@ defineProps<{
 
 const selected = computed<Array<number>>(() => [])
 const confirmingTaskDeletion = ref(false);
-const creatingOrEditingTask = ref(false);
 const taskToDelete = ref<number | null>(null);
 const childRef = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
+
+const creatingOrEditingTask = ref(false);
+const createEditTask = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
 
 const confirmTaskDeletion = (task: number) => {
     taskToDelete.value = task
@@ -33,12 +35,11 @@ const closeModal = () => {
     confirmingTaskDeletion.value = false
 };
 
-const createOrEditTask = () => {
+const createOrEditTask = (task: Task | null) => {
+    if (task != null) {
+        createEditTask.value?.editTask(task)
+    }
     creatingOrEditingTask.value = true
-    // taskToDelete.value = task
-    // confirmingTaskDeletion.value = true
-    //
-    // setTimeout(() => childRef.value!.focusToInput(), 250);
 };
 
 const closeEditModal = () => {
@@ -58,8 +59,9 @@ const getTasks = ({page = 1, perPage = 1}) => {
                     Tasks
                 </h2>
 
-                <PrimaryButton @click="createOrEditTask"
-                      class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                <PrimaryButton
+                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
+                    @click="createOrEditTask">
                     Create Task
                 </PrimaryButton>
             </div>
@@ -129,7 +131,9 @@ const getTasks = ({page = 1, perPage = 1}) => {
 
                                         <div class="border-t border-gray-200 dark:border-gray-600"/>
 
-                                        <DropdownLink :href="route('tasks.edit', task.id)">Edit</DropdownLink>
+                                        <DropdownLink as="button" @click.prevent="createOrEditTask(task)">
+                                            Edit
+                                        </DropdownLink>
 
                                         <div class="border-t border-gray-200 dark:border-gray-600"/>
 
@@ -168,6 +172,7 @@ const getTasks = ({page = 1, perPage = 1}) => {
         <ConfirmDeleteModalComponent ref="childRef" :show="confirmingTaskDeletion" :task="taskToDelete"
                                      @close="closeModal"/>
 
-        <CreateEditModalComponent :show="creatingOrEditingTask" :statuses="statuses" @close-create="closeEditModal" />
+        <CreateEditModalComponent ref="createEditTask" :show="creatingOrEditingTask" :statuses="statuses"
+                                  @close-create="closeEditModal"/>
     </AppLayout>
 </template>

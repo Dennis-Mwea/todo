@@ -62,20 +62,6 @@ class TasksController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param Task $task
-     * @return Response
-     */
-    public function edit(Task $task): Response
-    {
-        return Inertia::render('Tasks/Edit', [
-            'statuses' => Status::get(),
-            'task' => $task->load('task')->append('formatted_due_date'),
-        ]);
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Request $request

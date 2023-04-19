@@ -23,6 +23,6 @@ Route::middleware([
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
     Route::resource('/tasks', TasksController::class)->except([
-        'show', 'create',
+        'show', 'create', 'edit',
     ]);
 });
