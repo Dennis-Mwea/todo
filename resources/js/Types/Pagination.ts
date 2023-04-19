@@ -1,4 +1,4 @@
-interface Pagination<T> {
+export interface Pagination<T> {
 	data: Array<T>
 	to: number
 	from: number

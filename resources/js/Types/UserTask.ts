@@ -1,4 +1,6 @@
-interface UserTask {
+import type {Status} from "@/Types/Status";
+
+export interface UserTask {
 	created_at: String
 	deleted_at: String
 	due_date: String
