@@ -9,6 +9,10 @@ import PaginationComponent from "@/Components/PaginationComponent.vue";
 import ConfirmDeleteModalComponent from "@/PageComponents/Tasks/Modals/ConfirmDeleteModalComponent.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import CreateEditModalComponent from "@/PageComponents/Tasks/Modals/CreateEditModalComponent.vue";
+import {DisplayMode} from "@/Types/DisplayMode";
+import type {Pagination} from "@/Types/Pagination";
+import type {Task} from "@/Types/Task";
+import type {Status} from "@/Types/Status";
 
 const props = defineProps<{
     tasks: Pagination<Task>,
@@ -18,7 +22,8 @@ const props = defineProps<{
 const confirmingTaskDeletion = ref(false);
 const taskToDelete = ref<number | null>(null);
 const childRef = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
-const creatingOrEditingTask = ref(false);
+const creatingOrEditingTask = ref<boolean>(false);
+const mode = ref<DisplayMode>(DisplayMode.Kanban);
 const createEditTask = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
 let selected = ref<Array<number>>([])
 
@@ -64,11 +69,15 @@ const getTasks = ({page = 1, perPage = 1}) => {
     router.get(route('tasks.index', {page, perPage}));
 }
 
-const changeStatus = status => {
+const changeStatus = (status: number) => {
     router.post(route('tasks.progress'), {
         status: status,
         tasks: selected.value,
     });
+}
+
+const filterTasks = (status: Status) => {
+    return props.tasks.data.filter(task => task.status_id === status.id)
 }
 </script>
 
@@ -88,8 +97,32 @@ const changeStatus = status => {
             </div>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="pt-12">
+            <div v-if="mode == DisplayMode.Kanban" class="max-w-full">
+                <div class="flex space-x-8 ms-4">
+                    <div v-for="status in statuses" :key="`columns-${status.id}`"
+                         class="w-[21.875rem] min-w-[21.875rem] rounded-md min-h-[calc(100vh_-_211px)] border dark:border-slate-600">
+                        <div class="p-6">
+                            <h3 class="text-slate-400 dark:text-slate-200">{{ status.name }}</h3>
+
+                            <hr class="mt-2 mb-6">
+                        </div>
+
+                        <div class="tasks max-h-[calc(100vh_-_316px)] overflow-y-auto ms-6">
+                            <div v-for="(task, index) in filterTasks(status)"
+                                 :key="`filtered-task-${status.id}-${task.id}`"
+                                 :class="{'mb-4': filterTasks(status).length !== index}"
+                                 class="item rounded shadow border dark:border-slate-600 p-3 me-6">
+                                <h2 class="text-slate-400 dark:text-slate-200 font-semibold">{{ task.name }}</h2>
+
+                                <p class="text-slate-400 dark:text-slate-200">{{ task.description }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-12">
                 <table class="border-collapse table-auto w-full text-sm">
                     <thead>
                     <tr>

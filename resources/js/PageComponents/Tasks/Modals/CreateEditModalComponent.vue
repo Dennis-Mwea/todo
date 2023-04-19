@@ -9,6 +9,8 @@ import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import TextAreaInput from "@/Components/TextAreaInput.vue";
 import {ref} from "vue";
+import type {Status} from "@/Types/Status";
+import type {Task} from "@/Types/Task";
 
 const props = defineProps<{
     show: Boolean,
