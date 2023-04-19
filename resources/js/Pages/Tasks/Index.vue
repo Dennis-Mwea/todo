@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {ref} from "vue";
+import {onBeforeMount, ref} from "vue";
 import {Link, router} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -13,6 +13,7 @@ import {DisplayMode} from "@/Types/DisplayMode";
 import type {Pagination} from "@/Types/Pagination";
 import type {Task} from "@/Types/Task";
 import type {Status} from "@/Types/Status";
+import * as Draggable from "vuedraggable";
 
 const props = defineProps<{
     tasks: Pagination<Task>,
@@ -26,6 +27,11 @@ const creatingOrEditingTask = ref<boolean>(false);
 const mode = ref<DisplayMode>(DisplayMode.Kanban);
 const createEditTask = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
 let selected = ref<Array<number>>([])
+let filteredTasks = ref<Array<Array<Task>>>([])
+
+onBeforeMount(() => {
+    props.statuses.forEach(status => (filteredTasks.value.push(filterTasks(status))))
+})
 
 const confirmTaskDeletion = (task: number) => {
     taskToDelete.value = task
@@ -76,8 +82,16 @@ const changeStatus = (status: number) => {
     });
 }
 
-const filterTasks = (status: Status) => {
-    return props.tasks.data.filter(task => task.status_id === status.id)
+const filterTasks = (status: Status): Array<Task> => props.tasks.data.filter(task => task.status_id === status.id)
+
+const logChangeEvent = ({added, removed}) => {
+    if (added) {
+        const index = filteredTasks.value.findIndex(tasks => tasks.some(task => task.id === added.element.id))
+        router.post(route('tasks.progress'), {
+            status: index + 1,
+            tasks: [added.element.id],
+        })
+    }
 }
 </script>
 
@@ -100,23 +114,28 @@ const filterTasks = (status: Status) => {
         <div class="pt-12">
             <div v-if="mode == DisplayMode.Kanban" class="max-w-full">
                 <div class="flex space-x-8 ms-4">
-                    <div v-for="status in statuses" :key="`columns-${status.id}`"
-                         class="w-[21.875rem] min-w-[21.875rem] rounded-md min-h-[calc(100vh_-_211px)] border dark:border-slate-600">
+                    <div v-for="(status, index) in statuses" :key="`columns-${status.id}`"
+                         class="w-[21.875rem] min-w-[21.875rem] rounded-md min-h-[calc(100vh_-_227px)] border dark:border-slate-600">
                         <div class="p-6">
                             <h3 class="text-slate-400 dark:text-slate-200">{{ status.name }}</h3>
 
                             <hr class="mt-2 mb-6">
                         </div>
 
-                        <div class="tasks max-h-[calc(100vh_-_316px)] overflow-y-auto ms-6">
-                            <div v-for="(task, index) in filterTasks(status)"
-                                 :key="`filtered-task-${status.id}-${task.id}`"
-                                 :class="{'mb-4': filterTasks(status).length !== index}"
-                                 class="item rounded shadow border dark:border-slate-600 p-3 me-6">
-                                <h2 class="text-slate-400 dark:text-slate-200 font-semibold">{{ task.name }}</h2>
+                        <div class="tasks h-[calc(100vh_-_332px)] overflow-y-auto ms-6 mb-4">
+                            <Draggable v-model="filteredTasks[index]" class="list-group h-full" group="tasks"
+                                       item-key="status_id" @change="logChangeEvent">
+                                <template #item="{element}">
+                                    <div
+                                        class="item rounded shadow border dark:border-slate-600 p-3 me-6 mb-4 list-group-item cursor-move">
+                                        <h2 class="text-slate-400 dark:text-slate-200 font-semibold">
+                                            {{ element.name }}
+                                        </h2>
 
-                                <p class="text-slate-400 dark:text-slate-200">{{ task.description }}</p>
-                            </div>
+                                        <p class="text-slate-400 dark:text-slate-200">{{ element.description }}</p>
+                                    </div>
+                                </template>
+                            </Draggable>
                         </div>
                     </div>
                 </div>
