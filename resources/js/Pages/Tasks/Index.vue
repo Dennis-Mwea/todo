@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {Link, router} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -10,18 +10,17 @@ import ConfirmDeleteModalComponent from "@/PageComponents/Tasks/Modals/ConfirmDe
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import CreateEditModalComponent from "@/PageComponents/Tasks/Modals/CreateEditModalComponent.vue";
 
-defineProps<{
+const props = defineProps<{
     tasks: Pagination<Task>,
     statuses: Array<Status>,
 }>()
 
-const selected = computed<Array<number>>(() => [])
 const confirmingTaskDeletion = ref(false);
 const taskToDelete = ref<number | null>(null);
 const childRef = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
-
 const creatingOrEditingTask = ref(false);
 const createEditTask = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
+let selected = ref<Array<number>>([])
 
 const confirmTaskDeletion = (task: number) => {
     taskToDelete.value = task
@@ -46,8 +45,30 @@ const closeEditModal = () => {
     creatingOrEditingTask.value = false
 }
 
+const check = (optionId, checked) => {
+    if (checked) {
+        selected.value.push(optionId)
+    } else {
+        selected.value.splice(selected.value.indexOf(optionId), 1)
+    }
+}
+
+const selectAll = (checked) => {
+    selected.value = []
+    if (checked) {
+        selected.value = props.tasks.data.map(task => task.id)
+    }
+}
+
 const getTasks = ({page = 1, perPage = 1}) => {
     router.get(route('tasks.index', {page, perPage}));
+}
+
+const changeStatus = status => {
+    router.post(route('tasks.progress'), {
+        status: status,
+        tasks: selected.value,
+    });
 }
 </script>
 
@@ -72,8 +93,9 @@ const getTasks = ({page = 1, perPage = 1}) => {
                 <table class="border-collapse table-auto w-full text-sm">
                     <thead>
                     <tr>
-                        <th class="">
-                            <Checkbox v-model:checked="selected" name="selected"/>
+                        <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
+                            <Checkbox id="select-all" :checked="selected.length === tasks.data.length"
+                                      name="select_all" @update:checked="selectAll($event)"/>
                         </th>
 
                         <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
@@ -85,7 +107,28 @@ const getTasks = ({page = 1, perPage = 1}) => {
                         </th>
 
                         <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
-                            Status
+                            <span v-if="selected.length === 0" class="">Status</span>
+
+                            <Dropdown v-else align="right">
+                                <template #trigger>
+                                    <span class="cursor-pointer flex items-center">
+                                        Status
+
+                                        <svg class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor"
+                                             stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M19.5 8.25l-7.5 7.5-7.5-7.5" stroke-linecap="round"
+                                                  stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                </template>
+
+                                <template #content>
+                                    <DropdownLink v-for="(status) in statuses" :key="`status-${status.id}`" as="button"
+                                                  @click="changeStatus(status.id)">
+                                        {{ status.name }}
+                                    </DropdownLink>
+                                </template>
+                            </Dropdown>
                         </th>
 
                         <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">
@@ -97,7 +140,8 @@ const getTasks = ({page = 1, perPage = 1}) => {
                     <template v-if="tasks.data.length > 0">
                         <tr v-for="(task, index) in tasks.data" :key="`task-${task.id}-${index}`">
                             <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
-                                <Checkbox v-model:checked="selected" name="selected"/>
+                                <Checkbox :id="`select-${task.id}-${index}`" :checked="selected.includes(task.id)"
+                                          name="selected" @update:checked="check(task.id, $event)"/>
                             </td>
 
                             <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">

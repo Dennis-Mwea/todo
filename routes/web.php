@@ -22,6 +22,7 @@ Route::middleware([
 ])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
+    Route::post('/tasks/progress', [TasksController::class, 'progressTasks'])->name('tasks.progress');
     Route::resource('/tasks', TasksController::class)->except([
         'show', 'create', 'edit',
     ]);
