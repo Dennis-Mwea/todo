@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue'
+<script lang="ts" setup>
+import {computed, ref} from 'vue'
 
 const props = defineProps<{
     data: Pagination<Task>,
@@ -53,12 +53,10 @@ const changePerPage = () => {
         <div class="flex items-center">
             <p>
                 Items Per Page
-                <select
-                    v-model="perPage"
-                    class="border-slate-200 ml-1 py-1 text-primary-400"
-                    @change="changePerPage">
+                <select v-model="perPage" class="border-slate-200 ml-1 py-1 text-primary-400" @change="changePerPage">
                     <option value="5">5</option>
                     <option value="10">10</option>
+                    <option value="15">15</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
@@ -75,34 +73,27 @@ const changePerPage = () => {
             </p>
         </div>
         <div class="flex items-center -space-x-px">
-            <button
-                :class="{
-                    'disabled cursor-not-allowed opacity-50': data.current_page === 1
-                }"
-                class="px-4 py-1 mr-1 bg-slate-100 text-slate-600 flex items-center transition"
-                @click="goToPage(data.current_page - 1)">
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M15.41 7.41L14 6l-6 6l6 6l1.41-1.41L10.83 12z" />
+            <button :class="{'disabled cursor-not-allowed opacity-50': data.current_page === 1}"
+                    class="px-4 py-1 mr-1 bg-slate-100 text-slate-600 flex items-center transition"
+                    @click="goToPage(data.current_page - 1)">
+                <svg height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M15.41 7.41L14 6l-6 6l6 6l1.41-1.41L10.83 12z" fill="currentColor"/>
                 </svg>
                 Previous
             </button>
             <div v-for="(link, i) in pages" :key="i" class="flex justify-center items-center">
-                <button
-                    :class="link.active ? 'bg-primary-400 text-white hover:text-white' : 'bg-slate-100 '"
-                    class="mx-1 h-8 w-8 flex items-center justify-center transition"
-                    @click="goToPage(link.label)">
+                <button :class="link.active ? 'bg-primary-400 text-white hover:text-white' : 'bg-slate-100 '"
+                        class="mx-1 h-8 w-8 flex items-center justify-center transition"
+                        @click="goToPage(link.label)">
                     <span v-html="link.label"></span>
                 </button>
             </div>
-            <button
-                :class="{
-                    'disabled cursor-not-allowed opacity-50': data.current_page === data.last_page
-                }"
-                class="px-4 py-1 ml-1 bg-slate-100 flex text-slate-600 items-center transition"
-                @click="goToPage(data.current_page + 1)">
+            <button :class="{'disabled cursor-not-allowed opacity-50': data.current_page === data.last_page}"
+                    class="px-4 py-1 ml-1 bg-slate-100 flex text-slate-600 items-center transition"
+                    @click="goToPage(data.current_page + 1)">
                 Next
-                <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z" />
+                <svg height="24" viewBox="0 0 24 24" width="24">
+                    <path d="M10 6L8.59 7.41L13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/>
                 </svg>
             </button>
         </div>
