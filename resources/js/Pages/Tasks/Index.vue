@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {onBeforeMount, ref} from "vue";
+import {onBeforeMount, ref, watch} from "vue";
 import {Link, router} from "@inertiajs/vue3";
 import Checkbox from "@/Components/Checkbox.vue";
 import Dropdown from "@/Components/Dropdown.vue";
@@ -14,6 +14,7 @@ import type {Pagination} from "@/Types/Pagination";
 import type {Task} from "@/Types/Task";
 import type {Status} from "@/Types/Status";
 import * as Draggable from "vuedraggable";
+import KanBanImage from "@/Assets/Images/KanBanView.svg"
 
 const props = defineProps<{
     tasks: Pagination<Task>,
@@ -32,6 +33,8 @@ let filteredTasks = ref<Array<Array<Task>>>([])
 onBeforeMount(() => {
     props.statuses.forEach(status => (filteredTasks.value.push(filterTasks(status))))
 })
+
+watch(() => props.tasks, () => props.statuses.forEach(status => (filteredTasks.value.push(filterTasks(status)))))
 
 const confirmTaskDeletion = (task: number) => {
     taskToDelete.value = task
@@ -93,6 +96,10 @@ const logChangeEvent = ({added, removed}) => {
         })
     }
 }
+
+const changeView = (view: DisplayMode) => {
+    mode.value = view
+}
 </script>
 
 <template>
@@ -103,11 +110,17 @@ const logChangeEvent = ({added, removed}) => {
                     Tasks
                 </h2>
 
-                <PrimaryButton
-                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150"
-                    @click="createOrEditTask">
-                    Create Task
-                </PrimaryButton>
+                <div class="flex items-center space-x-8">
+                    <span class="bg-gray-800 dark:bg-gray-200" @click="changeView(DisplayMode.Kanban)">
+                        <img :src="KanBanImage" alt="Kanban View" srcset="" class="w-8 h-8">
+                    </span>
+
+                    <span class="bg-gray-800 dark:bg-gray-200" @click="changeView(DisplayMode.Table)">
+                        <img :src="KanBanImage" alt="Kanban View" srcset="" class="w-8 h-8">
+                    </span>
+
+                    <PrimaryButton @click="createOrEditTask">Create Task</PrimaryButton>
+                </div>
             </div>
         </template>
 
@@ -141,7 +154,7 @@ const logChangeEvent = ({added, removed}) => {
                 </div>
             </div>
 
-            <div v-else class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-12">
+            <div v-else class="max-w-7xl mx-auto sm:px-6 lg:px-8 pb-12">
                 <table class="border-collapse table-auto w-full text-sm">
                     <thead>
                     <tr>
