@@ -22,15 +22,13 @@ const setTheme = () => {
         document.documentElement.classList.remove('dark')
     }
 }
+
 onBeforeMount(() => {
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         theme.value = ThemeMode.Dark
     } else {
         theme.value = ThemeMode.Light
     }
-})
-
-onMounted(() => {
     setTheme()
 })
 
