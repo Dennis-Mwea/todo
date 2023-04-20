@@ -168,7 +168,7 @@ const toggleDarkTheme = () => {
 
             <!-- Responsive Settings Options -->
             <div v-if="user != null" class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                <div class="flex items-center px-4">
+                <div class="flex items-center px-4 justify-between">
                     <div>
                         <div class="font-medium text-base text-gray-800 dark:text-gray-200">
                             {{ user.name }}
@@ -177,6 +177,13 @@ const toggleDarkTheme = () => {
                             {{ user.email }}
                         </div>
                     </div>
+
+                    <button
+                        class="text-slate-600 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+                        @click="toggleDarkTheme">
+                        <Light v-if="theme == ThemeMode.Dark"/>
+                        <Dark v-else/>
+                    </button>
                 </div>
 
                 <div class="mt-3 space-y-1">
