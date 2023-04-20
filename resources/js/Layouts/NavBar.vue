@@ -4,13 +4,13 @@ import Dropdown from "@/Components/Dropdown.vue";
 import {Link, router, usePage} from "@inertiajs/vue3";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import Logo from "@/Assets/Images/Logo.vue";
+import Logo from "@/Assets/Icons/Logo.vue";
 import type {PropType} from "vue";
 import {computed, onBeforeMount, ref} from "vue";
 import type {User} from "@/Types/User";
 import {ThemeMode} from "@/Types/ThemeMode";
-import Light from "@/Assets/Images/Light.vue";
-import Dark from "@/Assets/Images/Dark.vue";
+import Light from "@/Assets/Icons/Light.vue";
+import Dark from "@/Assets/Icons/Dark.vue";
 
 const theme = ref<ThemeMode | null>(null);
 const showingNavigationDropdown = ref(false);
