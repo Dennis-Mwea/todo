@@ -6,10 +6,10 @@ import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import Logo from "@/Assets/Images/Logo.vue";
 import type {PropType} from "vue";
-import {computed, onBeforeMount, onMounted, ref} from "vue";
+import {computed, onBeforeMount, ref} from "vue";
 import type {User} from "@/Types/User";
-import Light from "@/Assets/Images/Light.vue";
 import {ThemeMode} from "@/Types/ThemeMode";
+import Light from "@/Assets/Images/Light.vue";
 import Dark from "@/Assets/Images/Dark.vue";
 
 const theme = ref<ThemeMode | null>(null);
@@ -67,6 +67,13 @@ const toggleDarkTheme = () => {
                 </div>
 
                 <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <button
+                        class="text-slate-600 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+                        @click="toggleDarkTheme">
+                        <Light v-if="theme == ThemeMode.Dark"/>
+                        <Dark v-else/>
+                    </button>
+
                     <!-- Settings Dropdown -->
                     <div class="ml-3 relative">
                         <Dropdown v-if="user != null" align="right" width="48">
@@ -106,26 +113,17 @@ const toggleDarkTheme = () => {
                             </template>
                         </Dropdown>
 
-                        <div class="flex items-center">
-                            <button
-                                class="me-4 text-slate-600 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
-                                @click="toggleDarkTheme">
-                                <Light v-if="theme == ThemeMode.Dark"/>
-                                <Dark v-else/>
-                            </button>
+                        <template v-if="user == null">
+                            <Link :href="route('login')"
+                                  class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                                Log in
+                            </Link>
 
-                            <template v-if="user == null">
-                                <Link :href="route('login')"
-                                      class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                                    Log in
-                                </Link>
-
-                                <Link :href="route('register')"
-                                      class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                                    Register
-                                </Link>
-                            </template>
-                        </div>
+                            <Link :href="route('register')"
+                                  class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                                Register
+                            </Link>
+                        </template>
                     </div>
                 </div>
 
