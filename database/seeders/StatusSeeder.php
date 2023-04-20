@@ -15,7 +15,7 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         collect([
-            'Backlog', 'To Do', 'In Progress', 'In Review', 'Done',
+            'Pending', 'In Progress', 'In Review', 'Done',
         ])->each(fn (string $status) => Status::updateOrCreate(['name' => $status]));
     }
 }
