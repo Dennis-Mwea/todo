@@ -5,14 +5,42 @@ import {Link, router, usePage} from "@inertiajs/vue3";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import Logo from "@/Assets/Images/Logo.vue";
-import {computed, ref} from "vue";
-import type {User} from "@/Types/User";
 import type {PropType} from "vue";
+import {computed, onBeforeMount, onMounted, ref} from "vue";
+import type {User} from "@/Types/User";
+import Light from "@/Assets/Images/Light.vue";
+import {ThemeMode} from "@/Types/ThemeMode";
+import Dark from "@/Assets/Images/Dark.vue";
 
+const theme = ref<ThemeMode | null>(null);
 const showingNavigationDropdown = ref(false);
 const user = computed<PropType<User | null>>(() => usePage().props.auth.user)
+const setTheme = () => {
+    if (theme.value == ThemeMode.Dark) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+}
+onBeforeMount(() => {
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        theme.value = ThemeMode.Dark
+    } else {
+        theme.value = ThemeMode.Light
+    }
+})
+
+onMounted(() => {
+    setTheme()
+})
 
 const logout = () => (router.post(route('logout')));
+
+const toggleDarkTheme = () => {
+    theme.value = theme.value == ThemeMode.Light ? ThemeMode.Dark : ThemeMode.Light
+    localStorage.theme = theme.value == ThemeMode.Light ? 'light' : 'dark'
+    setTheme()
+}
 </script>
 
 <template>
@@ -80,17 +108,26 @@ const logout = () => (router.post(route('logout')));
                             </template>
                         </Dropdown>
 
-                        <template v-else>
-                            <Link :href="route('login')"
-                                  class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                                Log in
-                            </Link>
+                        <div class="flex items-center">
+                            <button
+                                class="me-4 text-slate-600 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
+                                @click="toggleDarkTheme">
+                                <Light v-if="theme == ThemeMode.Dark"/>
+                                <Dark v-else/>
+                            </button>
 
-                            <Link :href="route('register')"
-                                  class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
-                                Register
-                            </Link>
-                        </template>
+                            <template v-if="user == null">
+                                <Link :href="route('login')"
+                                      class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                                    Log in
+                                </Link>
+
+                                <Link :href="route('register')"
+                                      class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">
+                                    Register
+                                </Link>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
