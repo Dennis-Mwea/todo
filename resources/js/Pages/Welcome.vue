@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {Link} from "@inertiajs/vue3";
-import Next from "@/Assets/Images/Next.vue";
+import Next from "@/Assets/Icons/Next.vue";
 import WelcomeImage from "@/Assets/Images/WelcomeImage.png"
 </script>
 
