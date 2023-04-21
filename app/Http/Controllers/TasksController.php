@@ -18,24 +18,6 @@ use Laravel\Fortify\Actions\ConfirmPassword;
 class TasksController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function index(Request $request): Response
-    {
-        $tasks = Task::with('task')->whereHas('task', function (Builder $query) {
-            $query->where('user_id', auth()->id());
-        })->with(['task', 'status'])->latest()->paginate($request->integer('perPage', 15));
-
-        return Inertia::render('Tasks/Index', [
-            'tasks' => $tasks,
-            'statuses' => Status::get(),
-        ]);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param TaskRequest $request
@@ -60,7 +42,7 @@ class TasksController extends Controller
 
         flash("New task created.");
 
-        return to_route('tasks.index');
+        return back();
     }
 
     /**
@@ -90,7 +72,7 @@ class TasksController extends Controller
 
         flash("Task $task->name has been updated.");
 
-        return to_route('tasks.index');
+        return back();
     }
 
     /**

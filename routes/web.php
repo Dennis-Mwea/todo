@@ -21,9 +21,11 @@ Route::middleware([
     'auth:sanctum', config('jetstream.auth_session'), 'verified',
 ])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])
+        ->name('dashboard.chart-data');
 
     Route::post('/tasks/progress', [TasksController::class, 'progressTasks'])->name('tasks.progress');
-    Route::resource('/tasks', TasksController::class)->except([
-        'show', 'create', 'edit',
+    Route::resource('/tasks', TasksController::class)->only([
+        'store', 'update', 'destroy',
     ]);
 });
