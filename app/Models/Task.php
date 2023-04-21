@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Queries\TaskQuery;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder;
 
 class Task extends Model
 {
@@ -68,5 +70,16 @@ class Task extends Model
     public function getFormattedDueDateAttribute(): string
     {
         return $this->due_date->format('Y-m-d');
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param Builder $query
+     * @return TaskQuery
+     */
+    public function newEloquentBuilder($query): TaskQuery
+    {
+        return new TaskQuery($query);
     }
 }
