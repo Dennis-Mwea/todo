@@ -1,4 +1,5 @@
 export interface Status {
 	id: number
-	name: String
+	name: string
+	color: string
 }

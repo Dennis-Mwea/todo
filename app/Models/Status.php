@@ -21,6 +21,15 @@ class Status extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'color',
+    ];
+
+    /**
      * Get all the tasks in this status instance.
      *
      * @return HasMany
@@ -28,5 +37,15 @@ class Status extends Model
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function getColorAttribute(): string
+    {
+        return match ($this->id) {
+            1 => '#2563EB',
+            2 => '#F59E0B',
+            3 => '#4ade80',
+            default => '#059669',
+        };
     }
 }
