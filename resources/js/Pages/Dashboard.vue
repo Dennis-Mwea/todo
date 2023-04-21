@@ -4,7 +4,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Search from "@/Assets/Icons/Search.vue";
 import {router} from "@inertiajs/vue3";
-import {onMounted, ref, watch} from "vue";
+import {nextTick, onBeforeUnmount, onMounted, ref, watch} from "vue";
 import Settings from "@/Assets/Icons/Settings.vue";
 import {Chart} from "chart.js/auto";
 import type {ChartConfiguration, ChartItem} from "chart.js"
@@ -28,7 +28,7 @@ const props = defineProps<{
 
 const search = ref<string | null>(null)
 const chartElement = ref<ChartItem | null>(null)
-const chart = ref<any>(null)
+const chart = ref<Chart | null>(null)
 const mode = ref<DisplayMode>(DisplayMode.Kanban)
 const creatingOrEditingTask = ref<boolean>(false);
 const createEditTask = ref<InstanceType<typeof ConfirmDeleteModalComponent> | null>(null);
@@ -56,9 +56,15 @@ onMounted(() => {
     chart.value = new Chart(chartElement.value, config);
 })
 
+onBeforeUnmount(() => {
+    chart.value.destroy()
+})
+
 watch(() => props.chartData, () => {
-    chart.value?.destroy()
-    chart.value = new Chart(chartElement.value, config);
+    nextTick(() => {
+        chart.value.data.datasets[0].data = props.chartData
+        chart.value?.update('none')
+    })
 })
 
 const searchTodos = () => (router.get(route('tasks.index'), {search: search.value}, {
@@ -140,9 +146,10 @@ const closeEditModal = () => (creatingOrEditingTask.value = false)
                 </div>
 
                 <div class="w-full overflow-x-auto">
-                    <TableMode v-if="mode == DisplayMode.Table" :statuses="statuses" :tasks="tasks" @create-or-edit="createOrEditTask($event)"/>
+                    <TableMode v-if="mode == DisplayMode.Table" :statuses="statuses" :tasks="tasks"
+                               @create-or-edit="createOrEditTask($event)"/>
 
-                    <KanbanMode v-else :statuses="statuses" :tasks="tasks" />
+                    <KanbanMode v-else :statuses="statuses" :tasks="tasks"/>
                 </div>
             </div>
         </div>
