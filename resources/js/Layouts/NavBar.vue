@@ -59,10 +59,6 @@ const toggleDarkTheme = () => {
                         <NavLink :active="route().current('dashboard')" :href="route('dashboard')">
                             Dashboard
                         </NavLink>
-
-                        <NavLink :active="route().current('tasks.index')" :href="route('tasks.index')">
-                            Tasks
-                        </NavLink>
                     </div>
                 </div>
 
