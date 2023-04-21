@@ -4,7 +4,7 @@ import TextInput from "@/Components/TextInput.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import Search from "@/Assets/Icons/Search.vue";
 import {router} from "@inertiajs/vue3";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import Settings from "@/Assets/Icons/Settings.vue";
 import {Chart} from "chart.js/auto";
 import type {ChartConfiguration, ChartItem} from "chart.js"
@@ -23,6 +23,7 @@ import KanbanMode from "@/PageComponents/Tasks/KanbanMode.vue";
 const props = defineProps<{
     tasks: Pagination<Task>,
     statuses: Array<Status>,
+    chartData: Array<number>,
 }>()
 
 const search = ref<string | null>(null)
@@ -37,8 +38,8 @@ const config = <ChartConfiguration>{
         labels: props.statuses.map(status => status.name),
         datasets: [{
             hoverOffset: 4,
-            data: [300, 50, 100, 10],
             label: 'Todos Chart',
+            data: props.chartData,
             backgroundColor: props.statuses.map(status => status.color),
         }]
     },
@@ -52,6 +53,11 @@ const config = <ChartConfiguration>{
 }
 
 onMounted(() => {
+    chart.value = new Chart(chartElement.value, config);
+})
+
+watch(() => props.chartData, () => {
+    chart.value?.destroy()
     chart.value = new Chart(chartElement.value, config);
 })
 
